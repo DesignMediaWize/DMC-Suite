@@ -306,32 +306,37 @@ export default function App() {
     }
     
     // Default: Chat View
+    const hasUserMessages = state.messages.some(m => m.role === 'user');
+
     return (
       <>
-        {/* Mobile Header for Chat View */}
+        {/* Mobile Header for Chat View - Only shown when active conversation */}
         <div className="md:hidden h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-30 relative shrink-0">
           <span className="font-bold text-gray-800">DMC Suite</span>
-          <div className="flex gap-2">
-             <button 
-               onClick={() => setMobileTab('chat')} 
-               className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide transition-colors ${mobileTab === 'chat' ? 'bg-slate-900 text-white' : 'text-gray-500'}`}
-             >
-               Chat
-             </button>
-             <button 
-               onClick={() => setMobileTab('itinerary')} 
-               className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide transition-colors ${mobileTab === 'itinerary' ? 'bg-slate-900 text-white' : 'text-gray-500'}`}
-             >
-               Canvas {canvasItems.length > 0 && <span className="ml-1 bg-teal-500 text-white px-1.5 rounded-full">{canvasItems.length}</span>}
-             </button>
-          </div>
+          {hasUserMessages && (
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setMobileTab('chat')} 
+                className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide transition-colors ${mobileTab === 'chat' ? 'bg-slate-900 text-white' : 'text-gray-500'}`}
+              >
+                Chat
+              </button>
+              <button 
+                onClick={() => setMobileTab('itinerary')} 
+                className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide transition-colors ${mobileTab === 'itinerary' ? 'bg-slate-900 text-white' : 'text-gray-500'}`}
+              >
+                Canvas {canvasItems.length > 0 && <span className="ml-1 bg-teal-500 text-white px-1.5 rounded-full">{canvasItems.length}</span>}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex h-full relative overflow-hidden">
-          {/* Chat Panel */}
+          {/* Chat Panel - Full width on Landing Page, Split on Conversation */}
           <div className={`
-            absolute md:relative z-10 w-full md:w-[450px] lg:w-[500px] h-full bg-white border-r border-gray-200 transition-transform duration-300
+            absolute md:relative z-10 h-full bg-white border-r border-gray-200 transition-all duration-300
             ${mobileTab === 'chat' ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+            ${hasUserMessages ? 'w-full md:w-[450px] lg:w-[500px]' : 'w-full'}
           `}>
             <ChatInterface 
               messages={state.messages} 
@@ -343,31 +348,33 @@ export default function App() {
             />
           </div>
 
-          {/* Itinerary Panel */}
-          <div className={`
-            absolute md:relative z-0 w-full md:flex-1 h-full bg-gray-50 transition-transform duration-300
-            ${mobileTab === 'itinerary' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
-          `}>
-            {state.isGenerating && (!state.itinerary || state.itinerary.days.length === 0) ? (
-               <div className="h-full flex flex-col items-center justify-center p-8">
-                  <div className="relative mb-8">
-                    <div className="w-20 h-20 rounded-full border-4 border-teal-100 animate-pulse"></div>
-                    <div className="absolute top-0 left-0 w-20 h-20 rounded-full border-4 border-teal-500 border-t-transparent animate-spin"></div>
-                    <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-teal-600" size={24} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900">Crafting Itinerary</h3>
-                  <p className="text-gray-500 text-sm mt-3 max-w-sm text-center">
-                     Optimizing routes, checking opening hours, and calculating costs based on your selected preferences...
-                  </p>
-               </div>
-            ) : (
-              <ItineraryView 
-                  itinerary={state.itinerary} 
-                  canvasItems={canvasItems}
-                  onRemoveCanvasItem={handleRemoveCanvasItem}
-              />
-            )}
-          </div>
+          {/* Itinerary Panel - Only visible when user has started chatting */}
+          {hasUserMessages && (
+            <div className={`
+              absolute md:relative z-0 w-full md:flex-1 h-full bg-gray-50 transition-transform duration-300
+              ${mobileTab === 'itinerary' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
+            `}>
+              {state.isGenerating && (!state.itinerary || state.itinerary.days.length === 0) ? (
+                 <div className="h-full flex flex-col items-center justify-center p-8">
+                    <div className="relative mb-8">
+                      <div className="w-20 h-20 rounded-full border-4 border-teal-100 animate-pulse"></div>
+                      <div className="absolute top-0 left-0 w-20 h-20 rounded-full border-4 border-teal-500 border-t-transparent animate-spin"></div>
+                      <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-teal-600" size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900">Crafting Itinerary</h3>
+                    <p className="text-gray-500 text-sm mt-3 max-w-sm text-center">
+                       Optimizing routes, checking opening hours, and calculating costs based on your selected preferences...
+                    </p>
+                 </div>
+              ) : (
+                <ItineraryView 
+                    itinerary={state.itinerary} 
+                    canvasItems={canvasItems}
+                    onRemoveCanvasItem={handleRemoveCanvasItem}
+                />
+              )}
+            </div>
+          )}
         </div>
       </>
     );
