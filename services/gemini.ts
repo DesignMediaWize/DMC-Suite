@@ -1,8 +1,14 @@
 import { GoogleGenAI, Type, ChatSession } from "@google/genai";
 import { TripItinerary, ActivityType, PlaceDetails, ChatMessage } from "../types";
 
-// Initialize the API
-const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize the API with safety check for browser environments
+const getAiClient = () => {
+  const apiKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : '';
+  if (!apiKey) {
+    console.warn("API Key not found. Chat features will not function.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 // Helper to extract JSON from markdown code blocks
 const extractJsonBlock = (text: string): any[] | null => {
