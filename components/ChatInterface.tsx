@@ -205,19 +205,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-8">
                      <h2 className="font-bold text-slate-900 text-lg">New chat</h2>
-                
-                    {/* Filters / Pills */}
-                    <div className="hidden lg:flex items-center bg-gray-50 rounded-full p-1 border border-gray-100 shadow-sm">
-                        <button className="px-4 py-1.5 text-xs font-semibold text-gray-500 hover:text-slate-900 hover:bg-white hover:shadow-sm rounded-full transition-all">Where</button>
-                        <div className="w-px h-3 bg-gray-300 mx-1"></div>
-                        <button className="px-4 py-1.5 text-xs font-semibold text-gray-500 hover:text-slate-900 hover:bg-white hover:shadow-sm rounded-full transition-all">When</button>
-                        <div className="w-px h-3 bg-gray-300 mx-1"></div>
-                        <button className="px-4 py-1.5 text-xs font-bold text-slate-900 bg-white shadow-sm rounded-full transition-all flex items-center gap-1">
-                            2 travelers
-                        </button>
-                        <div className="w-px h-3 bg-gray-300 mx-1"></div>
-                        <button className="px-4 py-1.5 text-xs font-semibold text-gray-500 hover:text-slate-900 hover:bg-white hover:shadow-sm rounded-full transition-all">Budget</button>
-                    </div>
                 </div>
 
                 <button 

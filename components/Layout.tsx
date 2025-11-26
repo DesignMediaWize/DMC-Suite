@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   MessageCircle, 
   Search, 
@@ -12,7 +13,8 @@ import {
   User,
   MoreHorizontal,
   Menu,
-  X
+  X,
+  ChevronRight
 } from 'lucide-react';
 import { Page } from '../types';
 import { UpdatesDrawer } from './UpdatesDrawer';
@@ -45,6 +47,25 @@ export const Layout: React.FC<LayoutProps> = ({
   onSelectChat
 }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    if (isProfileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
 
   const handleNav = (page: Page) => {
     if (page === 'updates') {
@@ -188,14 +209,74 @@ export const Layout: React.FC<LayoutProps> = ({
         </div>
 
         {/* Footer / Profile */}
-        <div className="p-4 mt-auto">
-          <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors group">
-            <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-700">
-              <User size={20} />
+        <div className="p-4 mt-auto" ref={profileMenuRef}>
+          {/* Profile Menu Popup */}
+          {isProfileMenuOpen && (
+            <div className="absolute bottom-full left-4 right-4 mb-2 bg-white rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden z-50 animate-in zoom-in-95 duration-200 origin-bottom">
+              
+              {/* Header */}
+              <div className="p-4 border-b border-gray-100 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors">
+                 <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-slate-900">
+                   <User size={20} strokeWidth={2} />
+                 </div>
+                 <div className="flex-1">
+                   <h4 className="font-bold text-slate-900 leading-none">Traveler</h4>
+                   <span className="text-xs text-slate-500 font-medium">View profile</span>
+                 </div>
+                 <ChevronRight size={16} className="text-gray-400" />
+              </div>
+
+              {/* Menu Items Group 1 */}
+              <div className="py-2">
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Take our travel quiz
+                 </button>
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Account settings
+                 </button>
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Up Next
+                 </button>
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Receipts
+                 </button>
+              </div>
+
+              <div className="h-px bg-gray-100 mx-5 my-1"></div>
+
+              {/* Menu Items Group 2 */}
+              <div className="py-2">
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Give feedback
+                 </button>
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Privacy policy
+                 </button>
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Terms of service
+                 </button>
+              </div>
+
+              <div className="h-px bg-gray-100 mx-5 my-1"></div>
+
+              {/* Log in */}
+              <div className="py-2 pb-3">
+                 <button className="w-full text-left px-5 py-2.5 text-[15px] font-medium text-slate-700 hover:bg-gray-50 transition-colors">
+                    Log in
+                 </button>
+              </div>
+            </div>
+          )}
+
+          <div 
+            className={`flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors group relative ${isProfileMenuOpen ? 'bg-gray-50' : ''}`}
+            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+          >
+            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-slate-900">
+              <User size={20} strokeWidth={2} />
             </div>
             <div className="flex-1">
-              <h4 className="text-sm font-bold text-slate-900">Travel Agent</h4>
-              <p className="text-xs text-slate-500">Premium Plan</p>
+              <h4 className="text-sm font-bold text-slate-900">Traveler</h4>
             </div>
             <MoreHorizontal size={18} className="text-gray-400 group-hover:text-slate-900" />
           </div>
